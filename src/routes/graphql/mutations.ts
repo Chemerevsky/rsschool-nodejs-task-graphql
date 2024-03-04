@@ -1,7 +1,6 @@
 import { GraphQLObjectType,
-    GraphQLString,
-    GraphQLInt,
-    GraphQLBoolean,
+    GraphQLNonNull,
+    GraphQLBoolean
 } from 'graphql';
 import { PostType, CreatePostInputType, ChangePostInputType } from './types/post.js';
 import { UserType, CreateUserInputType, ChangeUserInputType } from './types/user.js';
@@ -92,6 +91,56 @@ const Mutation = new GraphQLObjectType({
                     where: { id },
                     data: dto,
                 });
+            }
+        },
+        subscribeTo: {
+            type: UserType,
+            args: {
+                userId: {
+                    type: new GraphQLNonNull(UUIDType)
+                },
+                authorId: {
+                    type: new GraphQLNonNull(UUIDType)
+                }
+            },
+            resolve: async (_, { userId, authorId }: { userId: string; authorId: string }) => {
+                return await prisma.user.update({
+                    where: {
+                        id: userId,
+                    },
+                    data: {
+                        userSubscribedTo: {
+                            create: {
+                                authorId: authorId,
+                            },
+                        },
+                    },
+                });
+            }
+        },
+        unsubscribeFrom: {
+            type: GraphQLBoolean,
+            args: {
+                userId: {
+                    type: new GraphQLNonNull(UUIDType)
+                },
+                authorId: {
+                    type: new GraphQLNonNull(UUIDType)
+                }
+            },
+            resolve: async (_, { userId, authorId }: { userId: string; authorId: string }) => {
+                const result: object = await prisma.subscribersOnAuthors.delete({
+                    where: {
+                        subscriberId_authorId: {
+                            subscriberId: userId,
+                            authorId: authorId,
+                        },
+                    }
+                });
+                if (result.hasOwnProperty('subscriberId')) {
+                    return true;
+                }
+                return false;
             }
         },
         createProfile: {
