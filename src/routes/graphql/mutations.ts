@@ -3,9 +3,9 @@ import { GraphQLObjectType,
     GraphQLInt,
     GraphQLBoolean,
 } from 'graphql';
-import { PostType, CreatePostInputType } from './types/post.js';
-import { UserType, CreateUserInputType } from './types/user.js';
-import { ProfileType, CreateProfileInputType } from './types/profile.js'; 
+import { PostType, CreatePostInputType, ChangePostInputType } from './types/post.js';
+import { UserType, CreateUserInputType, ChangeUserInputType } from './types/user.js';
+import { ProfileType, CreateProfileInputType, ChangeProfileInputType } from './types/profile.js'; 
 import { PrismaClient } from '@prisma/client';
 import { UUIDType } from './types/uuid.js';
 
@@ -37,6 +37,23 @@ const Mutation = new GraphQLObjectType({
                 return true;
             }
         },
+        changePost: {
+            type: PostType,
+            args: {
+                id: {
+                    type: UUIDType
+                },
+                dto: {
+                    type: ChangePostInputType
+                },
+            },
+            resolve: async (_, { id, dto }: { id: string; dto}) => {
+                return await prisma.post.update({
+                    where: { id },
+                    data: dto,
+                });
+            }
+        },
         createUser: {
             type: UserType,
             args: {
@@ -56,8 +73,25 @@ const Mutation = new GraphQLObjectType({
                 },
             },
             resolve: async (_, { id }: { id: string }) => {
-                await prisma.post.delete({ where: { id }});
+                await prisma.user.delete({ where: { id }});
                 return true;
+            }
+        },
+        changeUser: {
+            type: UserType,
+            args: {
+                id: {
+                    type: UUIDType
+                },
+                dto: {
+                    type: ChangeUserInputType
+                },
+            },
+            resolve: async (_, { id, dto }: { id: string; dto}) => {
+                return await prisma.user.update({
+                    where: { id },
+                    data: dto,
+                });
             }
         },
         createProfile: {
@@ -79,8 +113,25 @@ const Mutation = new GraphQLObjectType({
                 },
             },
             resolve: async (_, { id }: { id: string }) => {
-                await prisma.post.delete({ where: { id }});
+                await prisma.profile.delete({ where: { id }});
                 return true;
+            }
+        },
+        changeProfile: {
+            type: PostType,
+            args: {
+                id: {
+                    type: UUIDType
+                },
+                dto: {
+                    type: ChangeProfileInputType
+                },
+            },
+            resolve: async (_, { id, dto }: { id: string; dto}) => {
+                return await prisma.profile.update({
+                    where: { id },
+                    data: dto,
+                });
             }
         },
     }

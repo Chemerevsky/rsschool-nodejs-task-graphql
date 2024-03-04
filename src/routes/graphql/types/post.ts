@@ -29,7 +29,7 @@ export const PostType = new GraphQLObjectType({
 
 export const CreatePostInputType = new GraphQLInputObjectType({
     name: 'CreatePostInput',
-    fields: {
+    fields: () => ({
         title: {
             type: GraphQLString
         },
@@ -39,5 +39,14 @@ export const CreatePostInputType = new GraphQLInputObjectType({
         authorId: {
             type: GraphQLString
         }
-    }
+    })
+});
+
+export const ChangePostInputType = new GraphQLInputObjectType({
+    name: 'ChangePostInput',
+    fields: () => ({
+        title: {
+            type: GraphQLString
+        }
+    })
 });

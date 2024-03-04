@@ -44,7 +44,7 @@ export const ProfileType = new GraphQLObjectType({
 
 export const CreateProfileInputType = new GraphQLInputObjectType({
     name: 'CreateProfileInput',
-    fields: {
+    fields: () => ({
         isMale: {
             type: GraphQLBoolean
         },
@@ -57,5 +57,14 @@ export const CreateProfileInputType = new GraphQLInputObjectType({
         userId: {
             type: GraphQLString
         }
-    }
+    })
+});
+
+export const ChangeProfileInputType = new GraphQLInputObjectType({
+    name: 'ChangeProfileInput',
+    fields: () => ({
+        isMale: {
+            type: GraphQLBoolean
+        }
+    })
 });
